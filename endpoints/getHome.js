@@ -1,0 +1,9 @@
+import listEndpoints from "express-list-endpoints";
+
+export const getHome = (app) => (req, res) => {
+  const endpoints = listEndpoints(app);
+  res.json({
+    message: "Welcome to the Happy Thoughts API",
+    endpoints,
+  });
+};

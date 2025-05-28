@@ -1,71 +1,43 @@
 import cors from "cors"
 import express from "express"
 import thoughtData from "./data.json"
-import listEndpoints from 'express-list-endpoints'
+import { getSortedThoughts } from "./utils/getSortedThoughts"
+import { getFilteredThoughts } from "./utils/getFiltredThoughts"
+import { getThoughtById } from "./endpoints/getThoughtById"
+import { getHome } from "./endpoints/getHome"
 
-// Defines the port the app will run on. Defaults to 8080, but can be overridden
-// when starting the server. Example command to overwrite PORT env variable value:
-// PORT=9000 npm start
+// The setup of the port
 const port = process.env.PORT || 8080
 const app = express()
 
-// Add middlewares to enable cors and json body parsing
+// The middleware
 app.use(cors())
 app.use(express.json())
 
-// Start defining your routes here
-app.get("/", (req, res) => {
-  const endpoints = listEndpoints(app)
-  res.json({
-    message: "Welcome to the Happy Thoughts API",
-    endpoints: endpoints
-  })
+// The home with the api documentation
+app.get("/", getHome(app))
 
-});
-
+// The main thoughts and querys
 app.get("/thoughts", (req, res) => {
+  const { minHearts, sort } = req.query
 
-  const { hearts } = req.query
+  let result = thoughtData
 
-  let sortedThoughts = thoughtData
-
-  if (hearts) {
-    sortedThoughts = sortedThoughts.sort((a, b) => a.hearts - b.hearts)
+  // Filters the hearts by the number and above
+  if (minHearts) {
+    result = getFilteredThoughts(result, minHearts)
   }
 
-  res.json(sortedThoughts)
-})
-
-app.get("/thoughts/:id", (req, res) => {
-  const thought = thoughtData.find(thought => thought._id === req.params.id)
-
-  console.log(thought)
-
-  if (!thought) {
-    return res.send("error: Thought not found")
+  // Sorts the heart in an accending order
+  if (sort === "hearts") {
+    result = getSortedThoughts(result, true)
   }
 
-  res.json(thought)
+  res.json(result)
 })
 
-// app.get("/flowers", (req, res) => {
-
-//   const { color, symbol } = req.query
-
-//   let filteredFlowers = flowerData
-
-//   if (color) {
-//     filteredFlowers = filteredFlowers.filter(flower => flower.color.toLowerCase() === color.toLowerCase())
-//   }
-
-//   if (symbol) {
-//     filteredFlowers = filteredFlowers.filter(flower =>
-//       flower.symbolism.some(word => word.toLowerCase() === symbol.toLowerCase())
-//     )
-//   }
-
-//   res.json(filteredFlowers)
-// })
+//Get an endpoint for a specific thought by ID
+app.get("/thoughts/:id", getThoughtById)
 
 
 // Start the server
