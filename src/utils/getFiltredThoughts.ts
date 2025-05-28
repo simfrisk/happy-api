@@ -1,5 +1,9 @@
+import { ThoughtType } from "../types/thoughtType";
 
-export const getFilteredThoughts = (thoughts, heartsQuery) => {
+export const getFilteredThoughts = (
+  thoughts: ThoughtType[],
+  heartsQuery: string
+): ThoughtType[] => {
   let filteredThoughts = thoughts
 
   if (heartsQuery) {

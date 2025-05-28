@@ -1,13 +1,17 @@
 //#region ---- Imports ----
 import cors from "cors"
 import express from "express"
-import thoughtData from "./data.json"
+import thoughtDataRaw from "./data.json"
 import { getSortedThoughts } from "./utils/getSortedThoughts"
 import { getFilteredThoughts } from "./utils/getFiltredThoughts"
 import { getThoughtById } from "./endpoints/getThoughtById"
 import { getHome } from "./endpoints/getHome"
 import { getPages } from "./utils/getPages"
+import { ThoughtType } from "./types/thoughtType"
+import { Request, Response } from "express";
 //#endregion
+
+const thoughtData: ThoughtType[] = thoughtDataRaw;
 
 //#region ---- Set up ----
 // The setup of the port
@@ -22,12 +26,21 @@ app.use(express.json())
 
 //#region ---- endpoint ----
 // The home with the api documentation
-app.get("/", getHome(app))
+app.get("/", getHome(app) as express.RequestHandler)
 
 // The main thoughts and querys
-app.get("/thoughts", (req, res) => {
+app.get("/thoughts", (
+  req: Request,
+  res: Response
+) => {
 
-  const { minHearts, sort, page } = req.query
+  interface ThoughtsQueryTypes {
+    minHearts?: string
+    sort?: string
+    page?: string
+  }
+
+  const { minHearts, sort, page } = req.query as ThoughtsQueryTypes
   let result = thoughtData
 
   // Filters the hearts by the number and above
@@ -44,7 +57,7 @@ app.get("/thoughts", (req, res) => {
 
   // Page function
   // URL example: http://localhost:8080/thoughts?page=1
-  const pagedResults = getPages(result, page)
+  const pagedResults = getPages(result, page ? Number(page) : 1)
 
   //Renders the Thoughts
   res.json(pagedResults)
