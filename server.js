@@ -5,6 +5,7 @@ import thoughtData from "./data.json"
 import { getThoughtById } from "./endpoints/getThoughtById"
 import { getThoughts } from "./endpoints/getThoughts"
 import { postThought } from "./endpoints/postThought"
+import { postLike } from "./endpoints/postLike"
 import { patchThought } from "./endpoints/patchThought"
 import { deleteThought } from "./endpoints/deleteThought"
 import { getHome } from "./endpoints/getHome"
@@ -48,6 +49,7 @@ app.get("/", getHome(app))
 app.get("/thoughts", getThoughts)
 app.get("/thoughts/:id", getThoughtById)
 app.post("/thoughts", postThought)
+app.post("/thoughts/:id/like", postLike)
 app.patch("/thoughts/:id", patchThought)
 app.delete('/thoughts/:id', deleteThought)
 

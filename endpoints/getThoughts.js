@@ -18,10 +18,8 @@ export const getThoughts = async (req, res) => {
     //URL exapmle: http://localhost:8080/thoughts?sort=hearts
     if (sort === "hearts") {
       result = getSortedThoughts(result, true)
-    }
-
-    // Default sort by creation date descending
-    if (!sort) {
+    } else {
+      // Always sort by createdAt descending if not sorting by hearts
       result = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
