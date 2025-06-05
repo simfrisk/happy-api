@@ -1,4 +1,3 @@
-
 export const getFilteredThoughts = (thoughts, heartsQuery) => {
   let filteredThoughts = thoughts
 

@@ -1,6 +1,7 @@
 import { Thought } from "../models/thought";
 import { getPages } from "../utils/getPages";
 import { getSortedThoughts } from "../utils/getSortedThoughts";
+import { getFilteredThoughts } from "../utils/getFiltredThoughts"
 
 export const getThoughts = async (req, res) => {
   try {
@@ -17,6 +18,11 @@ export const getThoughts = async (req, res) => {
     //URL exapmle: http://localhost:8080/thoughts?sort=hearts
     if (sort === "hearts") {
       result = getSortedThoughts(result, true)
+    }
+
+    // Default sort by creation date descending
+    if (!sort) {
+      result = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
     // Page function
