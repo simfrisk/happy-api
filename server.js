@@ -14,6 +14,8 @@ import { Thought } from "./models/thought"
 import { User } from "./models/user"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
+import crypto from "crypto"
+import bcrypt from "bcrypt"
 
 //#endregion
 
@@ -71,6 +73,25 @@ app.post("/thoughts/:id/like", postLike)
 app.post("/users", postUser)
 app.patch("/thoughts/:id", patchThought)
 app.delete('/thoughts/:id', deleteThought)
+
+app.get("/secrets", authenticateUser)
+app.get("/secrets", (req, res) => {
+  res.json({
+    secret: "This is secret"
+  })
+})
+
+app.post("/sessions", async (req, res) => {
+  const user = await User.findOne({
+    email: req.body.email
+  })
+
+  if (user && bcrypt.compareSync(req.body.password, user.password)) {
+    res.json({ userId: user._id })
+  } else {
+    res.json({ notFound: true })
+  }
+})
 
 //#endregion
 
