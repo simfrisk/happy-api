@@ -1,4 +1,5 @@
 import { User } from "../models/user";
+import bcrypt from "bcrypt"
 
 export const postUser = async (req, res) => {
   try {
@@ -13,10 +14,12 @@ export const postUser = async (req, res) => {
       accessToken: user.accessToken,
     })
   } catch (error) {
+    console.error("❌ Error creating user:", error);
+
     res.status(400).json({
       success: false,
       message: "Could not create user",
       errors: error
-    })
+    });
   }
 }

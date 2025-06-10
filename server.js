@@ -2,20 +2,20 @@
 import cors from "cors"
 import express, { response } from "express"
 import thoughtData from "./data.json"
+import { authenticateUser } from "./middleware/authenticateUser.js"
 import { getThoughtById } from "./endpoints/getThoughtById"
 import { getThoughts } from "./endpoints/getThoughts"
+import { getSecrets } from "./endpoints/getSecrets"
 import { postThought } from "./endpoints/postThought"
 import { postLike } from "./endpoints/postLike"
 import { postUser } from "./endpoints/postUser"
+import { postSession } from "./endpoints/postSession"
 import { patchThought } from "./endpoints/patchThought"
 import { deleteThought } from "./endpoints/deleteThought"
 import { getHome } from "./endpoints/getHome"
 import { Thought } from "./models/thought"
-import { User } from "./models/user"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
-import crypto from "crypto"
-import bcrypt from "bcrypt"
 
 //#endregion
 
@@ -23,6 +23,7 @@ import bcrypt from "bcrypt"
 dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/testing';
+// const mongoUrl = 'mongodb://localhost/testing';
 mongoose.connect(mongoUrl)
 
 // The setup of the port
@@ -45,22 +46,6 @@ if (process.env.RESET_DB) {
   seedDatabase();
 }
 
-//User stuff
-const authenticateUser = async (req, res, next) => {
-  const user = await User.findOne({
-    accessToken: req.header("Authorization")
-  })
-
-  if (user) {
-    req.user = user
-    next()
-  } else {
-    res.status(401).json({
-      loggedOut: true
-    })
-  }
-}
-
 //#endregion
 
 //#region ---- endpoint ----
@@ -71,27 +56,13 @@ app.get("/thoughts/:id", getThoughtById)
 app.post("/thoughts", postThought)
 app.post("/thoughts/:id/like", postLike)
 app.post("/users", postUser)
+app.post("/sessions", postSession)
 app.patch("/thoughts/:id", patchThought)
 app.delete('/thoughts/:id', deleteThought)
+app.get("/secrets", authenticateUser, getSecrets)
 
-app.get("/secrets", authenticateUser)
-app.get("/secrets", (req, res) => {
-  res.json({
-    secret: "This is secret"
-  })
-})
 
-app.post("/sessions", async (req, res) => {
-  const user = await User.findOne({
-    email: req.body.email
-  })
 
-  if (user && bcrypt.compareSync(req.body.password, user.password)) {
-    res.json({ userId: user._id })
-  } else {
-    res.json({ notFound: true })
-  }
-})
 
 //#endregion
 
