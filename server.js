@@ -1,25 +1,29 @@
 //#region ---- Imports ----
+
+import dotenv from "dotenv"
 import cors from "cors"
 import express, { response } from "express"
-import thoughtData from "./data.json"
+import mongoose from "mongoose"
+
 import { authenticateUser } from "./middleware/authenticateUser.js"
+import { resetDatabase } from "./setup/resetDatabase.js"
+
+import { getHome } from "./endpoints/getHome"
+import { getSecrets } from "./endpoints/getSecrets"
 import { getThoughtById } from "./endpoints/getThoughtById"
 import { getThoughts } from "./endpoints/getThoughts"
-import { getSecrets } from "./endpoints/getSecrets"
-import { postThought } from "./endpoints/postThought"
 import { postLike } from "./endpoints/postLike"
-import { postUser } from "./endpoints/postUser"
 import { postSession } from "./endpoints/postSession"
+import { postThought } from "./endpoints/postThought"
+import { postUser } from "./endpoints/postUser"
 import { patchThought } from "./endpoints/patchThought"
 import { deleteThought } from "./endpoints/deleteThought"
-import { getHome } from "./endpoints/getHome"
-import { Thought } from "./models/thought"
-import mongoose from "mongoose"
-import dotenv from "dotenv";
 
 //#endregion
 
 //#region ---- Set up ----
+
+// Runs the env file
 dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/testing';
@@ -34,17 +38,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-if (process.env.RESET_DB) {
-  const seedDatabase = async () => {
-    console.log("🌱 Resetting and seeding database...");
-    await Thought.deleteMany({});
-    thoughtData.forEach(thought => {
-      new Thought(thought).save();
-    });
-    console.log("✅ Seeding complete.");
-  };
-  seedDatabase();
-}
+// Reset the database with: RESET_DB=true npm start 
+resetDatabase()
 
 //#endregion
 
@@ -53,16 +48,13 @@ if (process.env.RESET_DB) {
 app.get("/", getHome(app))
 app.get("/thoughts", getThoughts)
 app.get("/thoughts/:id", getThoughtById)
+app.get("/secrets", authenticateUser, getSecrets)
 app.post("/thoughts", postThought)
 app.post("/thoughts/:id/like", postLike)
 app.post("/users", postUser)
 app.post("/sessions", postSession)
 app.patch("/thoughts/:id", patchThought)
 app.delete('/thoughts/:id', deleteThought)
-app.get("/secrets", authenticateUser, getSecrets)
-
-
-
 
 //#endregion
 
