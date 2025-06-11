@@ -46,10 +46,10 @@ resetDatabase()
 //#region ---- endpoint ----
 
 app.get("/", getHome(app))
-app.get("/thoughts", getThoughts)
+app.get("/thoughts", authenticateUser, getThoughts)
 app.get("/thoughts/:id", getThoughtById)
 app.get("/secrets", authenticateUser, getSecrets)
-app.post("/thoughts", authenticateUser, postThought)
+app.post("/thoughts", postThought)
 app.post("/thoughts/:id/like", postLike)
 app.post("/users", postUser)
 app.post("/sessions", postSession)
