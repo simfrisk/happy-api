@@ -11,4 +11,4 @@ export const postSession = async (req, res) => {
   } else {
     res.json({ notFound: true })
   }
-})
+}
