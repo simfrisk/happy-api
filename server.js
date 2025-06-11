@@ -47,7 +47,7 @@ resetDatabase()
 
 app.get("/", getHome(app))
 app.get("/thoughts", authenticateUser, getThoughts)
-app.get("/thoughts/:id", getThoughtById)
+app.get("/thoughts/:id", authenticateUser, getThoughtById)
 app.get("/secrets", authenticateUser, getSecrets)
 app.post("/thoughts", postThought)
 app.post("/thoughts/:id/like", postLike)
