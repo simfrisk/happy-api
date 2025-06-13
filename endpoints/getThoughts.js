@@ -26,10 +26,6 @@ export const getThoughts = async (req, res) => {
     // Page function
     // URL example: http://localhost:8080/thoughts?page=1
     const pagedResults = getPages(result, page)
-
-    pagedResults.forEach(thought => {
-      console.log("Thought user id:", thought.userId)  // or thought._id if that is the user id field
-    })
     // const totalPages = Math.ceil(result.length / 10)
 
     // res.json({
