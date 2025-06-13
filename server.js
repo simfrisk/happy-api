@@ -49,12 +49,12 @@ app.get("/", getHome(app))
 app.get("/thoughts", authenticateUser, getThoughts)
 app.get("/thoughts/:id", authenticateUser, getThoughtById)
 app.get("/secrets", authenticateUser, getSecrets)
-app.post("/thoughts", postThought)
+app.post("/thoughts", authenticateUser, postThought)
 app.post("/thoughts/:id/like", postLike)
 app.post("/users", postUser)
 app.post("/sessions", postSession)
-app.patch("/thoughts/:id", patchThought)
-app.delete('/thoughts/:id', deleteThought)
+app.patch("/thoughts/:id", authenticateUser, patchThought)
+app.delete('/thoughts/:id', authenticateUser, deleteThought)
 
 //#endregion
 

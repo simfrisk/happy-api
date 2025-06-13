@@ -2,10 +2,15 @@ import { Thought } from "../models/thought";
 
 export const postThought = async (req, res) => {
   const { message } = req.body;
-  const newThought = new Thought({ message })
+  const user = req.user;
 
   try {
-    const savedNewThought = await newThought.save()
+    const newThought = new Thought({
+      message,
+      createdBy: user._id
+    });
+
+    const savedNewThought = await newThought.save();
 
     if (!savedNewThought) {
       return res.status(400).json({
@@ -18,13 +23,14 @@ export const postThought = async (req, res) => {
     res.status(201).json({
       success: true,
       response: savedNewThought,
-      message: 'Thought successfully saved'
+      message: "Thought created"
     });
+
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       success: false,
       response: error,
-      message: 'Could not save thought to the database'
+      message: "Could not post thought"
     });
   }
-}
+};
