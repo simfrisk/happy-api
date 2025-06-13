@@ -27,13 +27,12 @@ export const getThoughts = async (req, res) => {
     // URL example: http://localhost:8080/thoughts?page=1
     const pagedResults = getPages(result, page)
     const totalPages = Math.ceil(result.length / 10)
-    console.log(totalPages)
 
-    // res.json({
-    //   pagedResults,
-    //   totalPages
-    // })
-    res.json(pagedResults)
+    res.json({
+      pagedResults,
+      totalPages
+    })
+    // res.json(pagedResults)
   } catch (error) {
     console.error("Error fetching thoughts:", error)
     res.status(500).json({ error: "Failed to fetch thoughts." })
