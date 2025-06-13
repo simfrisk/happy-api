@@ -26,7 +26,8 @@ export const getThoughts = async (req, res) => {
     // Page function
     // URL example: http://localhost:8080/thoughts?page=1
     const pagedResults = getPages(result, page)
-    // const totalPages = Math.ceil(result.length / 10)
+    const totalPages = Math.ceil(result.length / 10)
+    console.log(totalPages)
 
     // res.json({
     //   pagedResults,
